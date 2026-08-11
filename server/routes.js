@@ -5,16 +5,26 @@ import crypto from 'crypto';
 import { encrypt, decrypt } from './encryption.js';
 
 const router = express.Router();
-const DB_PATH = process.env.PERSISTENT_DIR 
+let DB_PATH = process.env.PERSISTENT_DIR 
   ? path.join(process.env.PERSISTENT_DIR, 'db.json') 
   : path.resolve('server/db.json');
 
 // Ensure db.json file database structure exists
 const initDb = () => {
-  const dir = path.dirname(DB_PATH);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  try {
+    const dir = path.dirname(DB_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  } catch (err) {
+    console.warn(`⚠️ Warning: Failed to create persistent directory at "${DB_PATH}". Falling back to local directory. Error:`, err.message);
+    DB_PATH = path.resolve('server/db.json');
+    const localDir = path.dirname(DB_PATH);
+    if (!fs.existsSync(localDir)) {
+      fs.mkdirSync(localDir, { recursive: true });
+    }
   }
+  
   if (!fs.existsSync(DB_PATH)) {
     fs.writeFileSync(DB_PATH, JSON.stringify({ shares: {} }, null, 2));
   }
