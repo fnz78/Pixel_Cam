@@ -57,6 +57,7 @@ export class UIManager {
     this.openCustomPaletteBtn = document.getElementById('openCustomPalette');
     this.exportSvgBtn = document.getElementById('exportSvgBtn');
     this.flipBtn = document.getElementById('flipBtn');
+    this.ejectFilmBtn = document.getElementById('ejectFilmBtn');
 
     this.beadReportBody = document.getElementById('beadReportBody');
     this.paletteBuilderGrid = document.getElementById('paletteBuilderGrid');
@@ -110,9 +111,14 @@ export class UIManager {
       switch (event.type) {
         case 'settings_change':
         case 'settings_change_multiple':
-        case 'image_load':
         case 'image_rotate':
         case 'viewport_reset':
+          this.refreshViewfinder();
+          this.updatePreviewFrame();
+          this.state.saveToUrl();
+          break;
+        case 'image_load':
+          this.ejectFilmBtn.style.display = this.state.loadedImage ? 'inline-flex' : 'none';
           this.refreshViewfinder();
           this.updatePreviewFrame();
           this.state.saveToUrl();
@@ -365,6 +371,10 @@ export class UIManager {
       }
     });
 
+    this.ejectFilmBtn.addEventListener('click', () => {
+      this.ejectFilm();
+    });
+
     this.exportSvgBtn.addEventListener('click', () => {
       this.downloadSVG();
     });
@@ -445,6 +455,16 @@ export class UIManager {
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
+  }
+
+  ejectFilm() {
+    this.state.setImage(null);
+    this.fileInput.value = '';
+    this.ejectFilmBtn.style.display = 'none';
+    this.emptyMsg.classList.remove('hidden');
+    this.powerDot.classList.remove('ready');
+    this.refreshViewfinder();
+    this.showHud('FILM EJECTED');
   }
 
   resizeImageIfNeeded(img) {
