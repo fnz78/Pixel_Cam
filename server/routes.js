@@ -5,7 +5,9 @@ import crypto from 'crypto';
 import { encrypt, decrypt } from './encryption.js';
 
 const router = express.Router();
-const DB_PATH = path.resolve('server/db.json');
+const DB_PATH = process.env.PERSISTENT_DIR 
+  ? path.join(process.env.PERSISTENT_DIR, 'db.json') 
+  : path.resolve('server/db.json');
 
 // Ensure db.json file database structure exists
 const initDb = () => {
