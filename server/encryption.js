@@ -5,7 +5,14 @@ dotenv.config();
 
 // Derives a secure 32-byte key from the environment secret
 const getSecretKey = () => {
-  const secret = process.env.ENCRYPTION_KEY || 'default-fallback-secure-key-32-character-long!';
+  const secret = process.env.ENCRYPTION_KEY;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('FATAL SECURITY ERROR: ENCRYPTION_KEY environment variable is required in production mode!');
+    }
+    console.warn('⚠️ WARNING: ENCRYPTION_KEY is not set. Falling back to development key.');
+    return crypto.createHash('sha256').update('default-fallback-secure-key-32-character-long!').digest();
+  }
   return crypto.createHash('sha256').update(secret).digest();
 };
 
