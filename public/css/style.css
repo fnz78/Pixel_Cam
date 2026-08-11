@@ -17,7 +17,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
@@ -45,13 +46,16 @@ html, body {
     padding: 0 !important;
     margin: 0 !important;
   }
+
   .stage {
     display: none !important;
   }
+
   .print-area {
     display: block !important;
     color: #000000;
   }
+
   .no-print {
     display: none !important;
   }
@@ -108,7 +112,8 @@ html, body {
   margin-top: 20px;
 }
 
-.print-legend th, .print-legend td {
+.print-legend th,
+.print-legend td {
   border: 1px solid #000;
   padding: 6px 10px;
   text-align: left;
@@ -178,7 +183,9 @@ html, body {
 }
 
 @keyframes blink {
-  50% { opacity: .15; }
+  50% {
+    opacity: .15;
+  }
 }
 
 .sub {
@@ -191,12 +198,10 @@ html, body {
 
 /* Pixel corners */
 .pixel-corners {
-  clip-path: polygon(
-    0 var(--step), var(--step) var(--step), var(--step) 0,
-    calc(100% - var(--step)) 0, calc(100% - var(--step)) var(--step), 100% var(--step),
-    100% calc(100% - var(--step)), calc(100% - var(--step)) calc(100% - var(--step)), calc(100% - var(--step)) 100%,
-    var(--step) 100%, var(--step) calc(100% - var(--step)), 0 calc(100% - var(--step))
-  );
+  clip-path: polygon(0 var(--step), var(--step) var(--step), var(--step) 0,
+      calc(100% - var(--step)) 0, calc(100% - var(--step)) var(--step), 100% var(--step),
+      100% calc(100% - var(--step)), calc(100% - var(--step)) calc(100% - var(--step)), calc(100% - var(--step)) 100%,
+      var(--step) 100%, var(--step) calc(100% - var(--step)), 0 calc(100% - var(--step)));
 }
 
 .pixel-corners-sm {
@@ -273,9 +278,7 @@ html, body {
 .scanlines {
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    to bottom, rgba(0,0,0,0.25) 0 2px, transparent 2px 4px
-  );
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 0 2px, transparent 2px 4px);
   mix-blend-mode: multiply;
   pointer-events: none;
 }
@@ -438,7 +441,7 @@ html, body {
   gap: 6px;
 }
 
-.control > label {
+.control>label {
   font-family: 'Press Start 2P', monospace;
   font-size: 9px;
   letter-spacing: 1px;
@@ -447,7 +450,7 @@ html, body {
   justify-content: space-between;
 }
 
-.control > label span {
+.control>label span {
   color: var(--cyan);
 }
 
@@ -578,7 +581,8 @@ input[type="text"]::placeholder {
   background: #fffaf0;
 }
 
-.btn:active, .btn.pressed {
+.btn:active,
+.btn.pressed {
   transform: translate(4px, 4px);
   box-shadow: 1px 1px 0 var(--bg-deep);
 }
@@ -610,7 +614,7 @@ input[type="text"]::placeholder {
   font-size: 14px;
   padding: 18px;
   margin-top: 6px;
-  text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .btn.small {
@@ -637,9 +641,17 @@ input[type="text"]::placeholder {
 }
 
 @keyframes kachunk {
-  0% { transform: translateY(0); }
-  40% { transform: translateY(4px); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(4px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
 }
 
 /* Tray area */
@@ -696,7 +708,7 @@ input[type="text"]::placeholder {
   width: 150px;
   background: var(--frame);
   padding: 10px 10px 34px;
-  box-shadow: 6px 6px 0 rgba(0,0,0,.45);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, .45);
   position: relative;
   animation: eject .35s ease;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -704,13 +716,20 @@ input[type="text"]::placeholder {
 }
 
 .polaroid:hover {
-  box-shadow: 10px 10px 0 rgba(0,0,0,0.5);
+  box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.5);
   z-index: 10;
 }
 
 @keyframes eject {
-  from { transform: translateY(-16px) scale(.9); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
+  from {
+    transform: translateY(-16px) scale(.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
 .polaroid__photo {
@@ -727,7 +746,7 @@ input[type="text"]::placeholder {
   display: block;
   image-rendering: pixelated;
   filter: blur(10px) grayscale(1) brightness(1.7) contrast(.8);
-  transition: filter 2.1s cubic-bezier(.2,.7,.3,1);
+  transition: filter 2.1s cubic-bezier(.2, .7, .3, 1);
 }
 
 .polaroid__photo .develop-veil {
@@ -868,8 +887,13 @@ input[type="text"]::placeholder {
 }
 
 @keyframes modal-open {
-  from { transform: scale(0.9) translateY(20px); }
-  to { transform: scale(1) translateY(0); }
+  from {
+    transform: scale(0.9) translateY(20px);
+  }
+
+  to {
+    transform: scale(1) translateY(0);
+  }
 }
 
 .modal-header {
@@ -1039,9 +1063,20 @@ footer.credit {
 
 /* Responsive adjustment */
 @media (max-width: 480px) {
-  .brand h1 { font-size: 17px; }
-  .lens-ring { width: 48px; height: 48px; }
-  .lens { width: 28px; height: 28px; }
+  .brand h1 {
+    font-size: 17px;
+  }
+
+  .lens-ring {
+    width: 48px;
+    height: 48px;
+  }
+
+  .lens {
+    width: 28px;
+    height: 28px;
+  }
+
   .control-row {
     flex-direction: column;
   }
@@ -1065,6 +1100,7 @@ label.btn:focus-within {
   margin-right: 6px;
   display: inline-block;
 }
+
 .btn .pixel-icon {
   margin-top: -2px;
 }
