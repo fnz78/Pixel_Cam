@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Tags -->
+  <title>PIXELCAM — Retro Pixel Dot Art Polaroid Maker</title>
+  <meta name="description" content="Convert any photo into retro pixelated bead-art or cross-stitch graphics. Features multiple dither modes, webcam captures, and printable crafting sheets.">
+  <meta name="keywords" content="bead art, perler beads, pixel art, polaroid, image dithering, retro camera, gameboy camera, nes palette">
+  
+  <!-- Security Headers -->
+  <meta http-equiv="Content-Security-Policy" 
+        content="default-src 'self' https://cdnjs.cloudflare.com; 
+                 img-src 'self' data: blob:; 
+                 font-src fonts.gstatic.com fonts.googleapis.com; 
+                 style-src 'self' fonts.googleapis.com 'unsafe-inline'; 
+                 script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="./css/style.css">
+  
+  <!-- Manifest -->
+  <link rel="manifest" href="./manifest.json">
+  
+  <!-- JSZip CDN for batch exports -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+</head>
+<body>
+
+  <!-- Printable Area (Hidden on screen via CSS) -->
+  <div id="printArea" class="print-area"></div>
+
+  <!-- Screen Stage -->
+  <div class="stage no-print">
+
+    <!-- Header / Brand -->
+    <header class="brand">
+      <span class="dot" id="powerDot"></span>
+      <h1>PIXELCAM</h1>
+      <div class="sub">retro bead & dot art camera</div>
+    </header>
+
+    <!-- Privacy Indicator -->
+    <div class="privacy-badge">
+      📷 Your photo stays local. EXIF metadata is stripped. Photos are stored in-browser memory and cleared on reload or when you clear the tray.
+    </div>
+
+    <!-- Camera Console -->
+    <main class="camera pixel-corners" id="cameraBody">
+      
+      <!-- Lens & Viewport -->
+      <section class="camera__top">
+        <div class="lens-ring"><div class="lens"></div></div>
+        
+        <div class="viewfinder" id="viewfinder">
+          <canvas id="viewCanvas" width="480" height="480"></canvas>
+          <div class="scanlines"></div>
+          <div class="flash" id="flashOverlay"></div>
+          
+          <!-- Viewer HUD overlay -->
+          <div class="viewfinder-hud" id="viewfinderHud"></div>
+          
+          <!-- Instructions -->
+          <p class="empty-msg pixel-font" id="emptyMsg">
+            NO FILM LOADED<br><br>
+            drop a photo here<br>
+            or tap LOAD FILM ▼
+          </p>
+
+          <!-- Interactive Tip -->
+          <div class="viewfinder-overlay-tip">
+            Drag to Pan | Scroll to Zoom
+          </div>
+        </div>
+      </section>
+
+      <!-- Control Panel -->
+      <section class="camera__controls">
+        
+        <!-- Media Inputs Row -->
+        <div class="control-row">
+          <label class="btn file-btn pixel-corners-sm pixel-corners" id="loadFilmLabel">
+            <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M1 2h5l2 2h7v10H1z" fill="currentColor"/><path d="M3 5h10v7H3z" fill="var(--ink)"/></svg> LOAD FILM
+            <input type="file" id="fileInput" accept="image/*" hidden>
+          </label>
+          <button class="btn webcam-btn pixel-corners-sm pixel-corners" id="webcamBtn">
+            <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M5 2h6v2h2v10H3V4h2z" fill="currentColor"/><rect x="7" y="6" width="4" height="4" fill="var(--ink)"/><rect x="5" y="6" width="1" height="1" fill="var(--yellow)"/></svg> WEBCAM
+          </button>
+          <button class="btn flip-btn pixel-corners-sm pixel-corners" id="flipBtn" title="Flip Camera" style="display: none; background: var(--cyan); padding: 12px;">
+            ⇄
+          </button>
+          <button class="btn rotate-btn pixel-corners-sm pixel-corners" id="rotateBtn" title="Rotate Image 90°">
+            ↺
+          </button>
+        </div>
+
+        <!-- Grid Size Control -->
+        <div class="control">
+          <label for="pixelSize">GRID SIZE <span><span id="pixelSizeLabel">9</span>px</span></label>
+          <input type="range" id="pixelSize" min="3" max="40" value="9">
+        </div>
+
+        <!-- Dot Fill Control -->
+        <div class="control">
+          <label for="dotFill">DOT FILL <span><span id="dotFillLabel">88</span>%</span></label>
+          <input type="range" id="dotFill" min="50" max="98" value="88">
+        </div>
+
+        <!-- Specular Gloss Control -->
+        <div class="control">
+          <label for="glossIntensity">GLOSS INTENSITY <span><span id="glossIntensityLabel">16</span>%</span></label>
+          <input type="range" id="glossIntensity" min="0" max="100" value="16">
+        </div>
+
+        <!-- Advanced Rendering Options Row -->
+        <div class="control-row">
+          <div class="control">
+            <label for="ditherSelect">DITHER MODE</label>
+            <input-group>
+              <select id="ditherSelect" class="btn small pixel-corners-sm pixel-corners" style="width:100%; color:var(--paper); background:var(--bg-mid); border:2px solid var(--ink); font-family:monospace; height:34px; padding: 4px 6px;">
+                <option value="none">None (Solid)</option>
+                <option value="bayer4">Bayer 4x4 Matrix</option>
+                <option value="floyd">Floyd-Steinberg</option>
+              </select>
+            </input-group>
+          </div>
+
+          <div class="control" style="justify-content: flex-end;">
+            <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:10px;">
+              <input type="checkbox" id="previewFrame" style="width:16px; height:16px;">
+              PREVIEW FRAME
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:10px;">
+              <input type="checkbox" id="luminanceSizing" style="width:16px; height:16px;">
+              LUM SIZING
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:10px;">
+              <input type="checkbox" id="showCraftGrid" style="width:16px; height:16px;">
+              CRAFT GRID
+            </label>
+          </div>
+        </div>
+
+        <!-- Dot Shape Selector -->
+        <div class="control">
+          <label>DOT SHAPE</label>
+          <div class="swatches" id="shapeSwatches">
+            <button class="btn shape-btn active pixel-corners-sm pixel-corners" data-shape="circle" title="Circle">●</button>
+            <button class="btn shape-btn pixel-corners-sm pixel-corners" data-shape="diamond" title="Diamond">◆</button>
+            <button class="btn shape-btn pixel-corners-sm pixel-corners" data-shape="square" title="Square">■</button>
+          </div>
+        </div>
+
+        <!-- Color Palette Selector -->
+        <div class="control">
+          <label>PALETTE</label>
+          <div class="swatches" id="paletteSwatches" style="align-items: center;">
+            <button class="swatch active pixel-corners-sm pixel-corners" data-palette="full" title="Full Color" style="background:conic-gradient(#ff6f9c,#ffd166,#5eead4,#4d7cff,#ff6f9c);"></button>
+            <button class="swatch pixel-corners-sm pixel-corners" data-palette="gb" title="Game Boy" style="background:#9bbc0f;"></button>
+            <button class="swatch pixel-corners-sm pixel-corners" data-palette="nes" title="8-bit NES" style="background:linear-gradient(135deg,#f83800 25%,#0000fc 25% 50%,#00a800 50% 75%,#fcfcfc 75%);"></button>
+            <button class="swatch pixel-corners-sm pixel-corners" data-palette="bw" title="Monochrome" style="background:linear-gradient(135deg,#1A1424,#F5EFDD);"></button>
+            <button class="swatch pixel-corners-sm pixel-corners" data-palette="sepia" title="Sepia" style="background:#a9762f;"></button>
+            <button class="swatch pixel-corners-sm pixel-corners" data-palette="perler" title="Perler Beads" style="background:radial-gradient(circle, #ff4d6d 30%, #fff 70%); color:#000; font-size:10px; font-weight:bold;">P</button>
+            <button class="swatch pixel-corners-sm pixel-corners" data-palette="hama" title="Hama Beads" style="background:radial-gradient(circle, #4d7cff 30%, #fff 70%); color:#000; font-size:10px; font-weight:bold;">H</button>
+            <button class="swatch pixel-corners-sm pixel-corners" data-palette="custom" title="Custom Colors" style="background:#4A3E63; color:var(--cyan); font-weight:bold; font-size:16px;">
+              <svg class="pixel-icon" viewBox="0 0 16 16" style="margin: 0; width: 16px; height: 16px;"><path d="M2 2h12v12H2z" fill="currentColor"/><rect x="4" y="4" width="2" height="2" fill="var(--pink)"/><rect x="10" y="4" width="2" height="2" fill="var(--yellow)"/><rect x="4" y="10" width="2" height="2" fill="var(--cyan)"/><rect x="10" y="10" width="2" height="2" fill="var(--paper)"/></svg>
+            </button>
+            <button class="btn small pixel-corners-sm pixel-corners" id="openCustomPalette" style="margin-left:auto;">EDIT CUSTOM</button>
+          </div>
+        </div>
+
+        <!-- Polaroid Frame Colors -->
+        <div class="control">
+          <label>FRAME COLOR</label>
+          <div class="swatches" id="frameSwatches">
+            <button class="swatch active pixel-corners-sm pixel-corners" data-frame="#F5EFDD" style="background:#F5EFDD;"></button>
+            <button class="swatch pixel-corners-sm pixel-corners" data-frame="#FF6F9C" style="background:#FF6F9C;"></button>
+            <button class="swatch pixel-corners-sm pixel-corners" data-frame="#5EEAD4" style="background:#5EEAD4;"></button>
+            <button class="swatch pixel-corners-sm pixel-corners" data-frame="#FFD166" style="background:#FFD166;"></button>
+            <button class="swatch pixel-corners-sm pixel-corners" data-frame="#241B2F" style="background:#241B2F;"></button>
+          </div>
+        </div>
+
+        <!-- Caption Writer -->
+        <div class="control">
+          <label for="captionInput">CAPTION</label>
+          <input type="text" id="captionInput" maxlength="30" placeholder="write on the frame...">
+        </div>
+
+        <!-- Action Tools Row -->
+        <div style="display:flex; gap:10px; margin-top:8px;">
+          <button class="btn pixel-corners" id="openPaletteReport" style="flex:1; background:var(--chrome-light); color:var(--paper);">
+            <svg class="pixel-icon" viewBox="0 0 16 16"><rect x="2" y="10" width="3" height="4" fill="currentColor"/><rect x="6" y="6" width="3" height="8" fill="currentColor"/><rect x="10" y="2" width="3" height="12" fill="currentColor"/></svg> BEAD REPORT
+          </button>
+          <button class="btn pixel-corners" id="exportSvgBtn" style="flex:1; background:var(--chrome-light); color:var(--paper);">
+            <svg class="pixel-icon" viewBox="0 0 16 16"><path d="M2 2v12h12v-3h-3v-3h-3V5h-3V2z" fill="currentColor"/><rect x="4" y="4" width="2" height="2" fill="var(--chrome-light)"/><rect x="7" y="7" width="2" height="2" fill="var(--chrome-light)"/></svg> EXPORT SVG
+          </button>
+        </div>
+
+        <!-- Eject Shutter -->
+        <button class="btn shutter pixel-corners" id="shutterBtn">◉ SHUTTER</button>
+      </section>
+    </main>
+
+    <!-- Polaroid Tray -->
+    <section class="tray-wrap">
+      <div class="tray-header">
+        <h2 class="pixel-font">TRAY</h2>
+        <div class="tray-actions">
+          <button class="btn small success pixel-corners-sm pixel-corners" id="batchDownload" disabled>DOWNLOAD ZIP</button>
+          <button class="btn small danger pixel-corners-sm pixel-corners" id="clearTray">CLEAR</button>
+          <button class="btn small pixel-corners-sm pixel-corners" id="undoDeleteBtn" style="display:none; background:var(--yellow); color:var(--ink);">UNDO DELETE</button>
+        </div>
+      </div>
+      <div class="tray" id="tray">
+        <p class="tray-empty" id="trayEmpty">developed photos will land here — click SHUTTER to eject one</p>
+      </div>
+    </section>
+
+    <!-- Credit Footer -->
+    <footer class="credit">
+      Double-click card to restore settings preset | Hover to reveal action tools
+    </footer>
+  </div>
+
+  <!-- Modal: Custom Palette Editor -->
+  <div class="modal-overlay" id="customPaletteModal">
+    <div class="modal-window pixel-corners">
+      <div class="modal-header">
+        <h3 class="modal-title">CUSTOM PALETTE BUILDER</h3>
+        <button class="modal-close">✖</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-top:0; font-size:15px; color:var(--yellow);">Select color boxes to adjust palette hex, or click + to add colors (max 16).</p>
+        <div class="palette-builder-grid" id="paletteBuilderGrid"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn success small pixel-corners-sm pixel-corners modal-close">APPLY PALETTE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Bead Color Count Report -->
+  <div class="modal-overlay" id="paletteReportModal">
+    <div class="modal-window pixel-corners">
+      <div class="modal-header">
+        <h3 class="modal-title">BEAD COUNT REPORT</h3>
+        <button class="modal-close">✖</button>
+      </div>
+      <div class="modal-body" id="beadReportBody">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn small pixel-corners-sm pixel-corners modal-close">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core JS Modules -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

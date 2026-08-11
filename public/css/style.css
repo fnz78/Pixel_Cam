@@ -1,0 +1,1070 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+:root {
+  --paper: #F5EFDD;
+  --ink: #241B2F;
+  --bg-deep: #191221;
+  --bg-mid: #2A2138;
+  --chrome: #4A3E63;
+  --chrome-light: #6C5C8A;
+  --pink: #FF6F9C;
+  --cyan: #5EEAD4;
+  --yellow: #FFD166;
+  --step: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'VT323', monospace;
+  background:
+    radial-gradient(circle at 20% 10%, #2E2440 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, #241C34 0%, transparent 50%),
+    var(--bg-deep);
+  color: var(--paper);
+  display: flex;
+  justify-content: center;
+  padding: 36px 16px 60px;
+}
+
+::selection {
+  background: var(--pink);
+  color: var(--ink);
+}
+
+/* Print CSS */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .stage {
+    display: none !important;
+  }
+  .print-area {
+    display: block !important;
+    color: #000000;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
+.print-area {
+  display: none;
+  font-family: monospace;
+  padding: 20px;
+  color: #000;
+  background: #fff;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.print-header {
+  border-bottom: 3px double #000;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.print-header h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 18px;
+  margin: 0 0 8px 0;
+}
+
+.print-grid-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.print-canvas-wrapper {
+  border: 4px solid #000;
+  padding: 10px;
+  background: #fff;
+}
+
+.print-canvas-wrapper canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.print-legend {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.print-legend th, .print-legend td {
+  border: 1px solid #000;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.print-legend th {
+  background: #eee;
+  font-weight: bold;
+}
+
+.print-swatch {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #000;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+/* Typography utilities */
+.pixel-font {
+  font-family: 'Press Start 2P', monospace;
+}
+
+.stage {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+}
+
+/* Brand styling */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.brand h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 22px;
+  margin: 0;
+  letter-spacing: 2px;
+  color: var(--paper);
+  text-shadow: 3px 3px 0 var(--pink), 6px 6px 0 var(--ink);
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff4d6d;
+  box-shadow: 0 0 8px 2px #ff4d6d99;
+  animation: blink 1.6s steps(2, end) infinite;
+  flex-shrink: 0;
+}
+
+.dot.ready {
+  background: var(--cyan);
+  box-shadow: 0 0 8px 2px #5eead499;
+  animation: none;
+}
+
+@keyframes blink {
+  50% { opacity: .15; }
+}
+
+.sub {
+  width: 100%;
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: var(--chrome-light);
+  text-transform: uppercase;
+}
+
+/* Pixel corners */
+.pixel-corners {
+  clip-path: polygon(
+    0 var(--step), var(--step) var(--step), var(--step) 0,
+    calc(100% - var(--step)) 0, calc(100% - var(--step)) var(--step), 100% var(--step),
+    100% calc(100% - var(--step)), calc(100% - var(--step)) calc(100% - var(--step)), calc(100% - var(--step)) 100%,
+    var(--step) 100%, var(--step) calc(100% - var(--step)), 0 calc(100% - var(--step))
+  );
+}
+
+.pixel-corners-sm {
+  --step: 6px;
+}
+
+/* Privacy banner */
+.privacy-badge {
+  font-size: 14px;
+  color: var(--yellow);
+  border: 2px dashed var(--chrome-light);
+  padding: 8px 12px;
+  text-align: center;
+  background: rgba(42, 33, 56, 0.4);
+  width: 100%;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+/* Camera Body */
+.camera {
+  width: 100%;
+  background: var(--chrome);
+  padding: 18px;
+  box-shadow: 8px 8px 0 var(--ink);
+}
+
+.camera__top {
+  background: var(--bg-mid);
+  padding: 14px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.lens-ring {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 3px 3px 0 var(--bg-deep);
+  position: relative;
+}
+
+.lens {
+  width: 38px;
+  height: 38px;
+  background: radial-gradient(circle at 35% 30%, var(--cyan) 0%, #1c6f66 40%, #0c2e2a 75%);
+  border: 3px solid var(--chrome-light);
+}
+
+.viewfinder {
+  position: relative;
+  flex: 1;
+  aspect-ratio: 1/1;
+  background: #0d0912;
+  overflow: hidden;
+  border: 3px solid var(--ink);
+  cursor: crosshair;
+  user-select: none;
+}
+
+#viewCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom, rgba(0,0,0,0.25) 0 2px, transparent 2px 4px
+  );
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .08s ease-out;
+  z-index: 10;
+}
+
+.flash.active {
+  opacity: .95;
+  transition: opacity .02s;
+}
+
+.empty-msg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  line-height: 1.8;
+  text-align: center;
+  color: var(--chrome-light);
+  padding: 12px;
+  pointer-events: none;
+  background: #0d0912;
+  z-index: 2;
+}
+
+.empty-msg.hidden {
+  display: none;
+}
+
+.viewfinder-overlay-tip {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--yellow);
+  font-size: 11px;
+  padding: 4px 8px;
+  text-align: center;
+  border: 1px solid var(--chrome-light);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 5;
+}
+
+.viewfinder:hover .viewfinder-overlay-tip {
+  opacity: 0.9;
+}
+
+.viewfinder.drag-over {
+  outline: 3px dashed var(--cyan);
+  outline-offset: -6px;
+}
+
+.viewfinder-hud {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 3px 6px;
+  font-size: 12px;
+  color: var(--cyan);
+  border: 1px solid var(--ink);
+  pointer-events: none;
+  display: none;
+  z-index: 5;
+}
+
+/* Hidden video for webcam */
+#webcamVideo {
+  display: none;
+}
+
+/* Viewfinder Polaroid Preview Mode */
+.viewfinder #viewCanvas {
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.viewfinder.preview-active #viewCanvas {
+  transform: scale(0.78) translateY(-8%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.polaroid-preview-frame {
+  position: absolute;
+  inset: 0;
+  background: var(--preview-frame-color, var(--paper));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.viewfinder.preview-active .polaroid-preview-frame {
+  opacity: 1;
+}
+
+.polaroid-preview-frame-cutout {
+  position: absolute;
+  top: 6.5%;
+  left: 11%;
+  width: 78%;
+  height: 78%;
+  background: transparent;
+  box-shadow: 0 0 0 9999px var(--preview-frame-color, var(--paper));
+}
+
+.polaroid-preview-caption-text {
+  width: 90%;
+  text-align: center;
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  color: var(--ink);
+  margin-bottom: 7%;
+  z-index: 4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+/* Controls */
+.camera__controls {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.control-row {
+  display: flex;
+  gap: 12px;
+}
+
+.control-row .control {
+  flex: 1;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control > label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--yellow);
+  display: flex;
+  justify-content: space-between;
+}
+
+.control > label span {
+  color: var(--cyan);
+}
+
+.input-group {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  background: var(--ink);
+  outline: none;
+  box-shadow: inset 2px 2px 0 var(--bg-deep);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--cyan);
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--cyan);
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--cyan);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+}
+
+input[type="text"] {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  padding: 10px 12px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  outline: none;
+  width: 100%;
+}
+
+input[type="text"]::placeholder {
+  color: #8a7f9c;
+}
+
+.swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--ink);
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--bg-deep);
+  transition: transform .08s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swatch:hover {
+  transform: translate(-1px, -1px);
+}
+
+.swatch.active {
+  outline: 3px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.shape-btn {
+  width: 38px;
+  height: 38px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.shape-btn.active {
+  background: var(--cyan);
+  outline: 3px solid var(--paper);
+  outline-offset: 0;
+}
+
+/* Button UI */
+.btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  padding: 12px 14px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 5px 5px 0 var(--bg-deep);
+  transition: transform .06s ease, box-shadow .06s ease, background .15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.btn:hover {
+  background: #fffaf0;
+}
+
+.btn:active, .btn.pressed {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 0 var(--bg-deep);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 5px 5px 0 var(--bg-deep) !important;
+}
+
+.btn.file-btn {
+  background: var(--cyan);
+  flex: 1;
+}
+
+.btn.webcam-btn {
+  background: var(--yellow);
+  flex: 1;
+}
+
+.btn.rotate-btn {
+  background: var(--pink);
+  padding: 12px;
+}
+
+.btn.shutter {
+  background: var(--pink);
+  font-size: 14px;
+  padding: 18px;
+  margin-top: 6px;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+}
+
+.btn.small {
+  font-size: 9px;
+  padding: 6px 8px;
+  box-shadow: 3px 3px 0 var(--bg-deep);
+}
+
+.btn.small:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--bg-deep);
+}
+
+.btn.danger {
+  background: var(--pink);
+}
+
+.btn.success {
+  background: var(--cyan);
+}
+
+.camera.kachunk {
+  animation: kachunk .18s ease;
+}
+
+@keyframes kachunk {
+  0% { transform: translateY(0); }
+  40% { transform: translateY(4px); }
+  100% { transform: translateY(0); }
+}
+
+/* Tray area */
+.tray-wrap {
+  width: 100%;
+}
+
+.tray-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.tray-header h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  margin: 0;
+  color: var(--paper);
+}
+
+.tray-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.tray {
+  width: 100%;
+  min-height: 140px;
+  background: var(--bg-mid);
+  border: 3px dashed var(--chrome);
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.tray-empty {
+  margin: auto;
+  font-size: 17px;
+  color: var(--chrome-light);
+  letter-spacing: 1px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Polaroid card */
+.polaroid {
+  --frame: var(--paper);
+  width: 150px;
+  background: var(--frame);
+  padding: 10px 10px 34px;
+  box-shadow: 6px 6px 0 rgba(0,0,0,.45);
+  position: relative;
+  animation: eject .35s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  user-select: none;
+}
+
+.polaroid:hover {
+  box-shadow: 10px 10px 0 rgba(0,0,0,0.5);
+  z-index: 10;
+}
+
+@keyframes eject {
+  from { transform: translateY(-16px) scale(.9); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.polaroid__photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  background: #0d0912;
+}
+
+.polaroid__photo canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  filter: blur(10px) grayscale(1) brightness(1.7) contrast(.8);
+  transition: filter 2.1s cubic-bezier(.2,.7,.3,1);
+}
+
+.polaroid__photo .develop-veil {
+  position: absolute;
+  inset: 0;
+  background: var(--frame);
+  opacity: 1;
+  transition: opacity 1.8s ease-in .3s;
+  pointer-events: none;
+}
+
+.polaroid__photo .develop-loader {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid var(--cyan);
+  padding: 4px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 6px;
+  color: var(--cyan);
+}
+
+.develop-bar-fill {
+  height: 4px;
+  background: var(--cyan);
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+.polaroid.developed .polaroid__photo canvas {
+  filter: blur(0) grayscale(0) brightness(1) contrast(1);
+}
+
+.polaroid.developed .polaroid__photo .develop-veil {
+  opacity: 0;
+}
+
+.polaroid.developed .polaroid__photo .develop-loader {
+  display: none;
+}
+
+.polaroid__caption {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--ink);
+  text-align: center;
+  margin-top: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 18px;
+}
+
+.polaroid__actions {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transform: scale(.8);
+  transition: opacity .15s ease, transform .15s ease;
+  z-index: 15;
+}
+
+.polaroid:hover .polaroid__actions {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.polaroid-btn {
+  width: 28px;
+  height: 28px;
+  background: var(--cyan);
+  border: 2px solid var(--ink);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0 var(--bg-deep);
+  color: var(--ink);
+}
+
+.polaroid-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0 var(--bg-deep);
+}
+
+.polaroid-btn.copy-btn {
+  background: var(--yellow);
+}
+
+.polaroid-btn.delete-btn {
+  background: var(--pink);
+}
+
+.polaroid-btn.share-btn {
+  background: var(--chrome-light);
+  color: var(--paper);
+}
+
+/* Modals (Retro Window Style) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  padding: 16px;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-window {
+  width: 100%;
+  max-width: 460px;
+  background: var(--chrome);
+  border: 4px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--bg-deep);
+  display: flex;
+  flex-direction: column;
+  animation: modal-open 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modal-open {
+  from { transform: scale(0.9) translateY(20px); }
+  to { transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  background: var(--bg-mid);
+  border-bottom: 4px solid var(--ink);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--yellow);
+  margin: 0;
+}
+
+.modal-close {
+  background: var(--pink);
+  border: 2px solid var(--ink);
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+
+.modal-close:active {
+  transform: translate(1px, 1px);
+}
+
+.modal-body {
+  padding: 18px;
+  max-height: 70vh;
+  overflow-y: auto;
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--paper);
+}
+
+.modal-footer {
+  border-top: 3px solid var(--ink);
+  padding: 12px 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--bg-mid);
+}
+
+/* Custom Palette Editor details */
+.palette-builder-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.palette-builder-color {
+  position: relative;
+  aspect-ratio: 1/1;
+  border: 3px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--bg-deep);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.palette-builder-color input[type="color"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.palette-builder-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: var(--pink);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-size: 8px;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.palette-builder-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: var(--bg-mid);
+  color: var(--chrome-light);
+  border: 3px dashed var(--chrome-light);
+  cursor: pointer;
+}
+
+.palette-builder-add:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* Bead count table styling */
+.bead-report-stats {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: var(--yellow);
+}
+
+.bead-report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.bead-report-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-mid);
+  border: 2px solid var(--ink);
+  padding: 8px 12px;
+}
+
+.bead-report-color-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bead-report-color-box {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--ink);
+}
+
+.bead-report-color-name {
+  font-size: 16px;
+  font-family: monospace;
+}
+
+.bead-report-count {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--cyan);
+}
+
+/* Footer credit */
+footer.credit {
+  font-size: 14px;
+  color: var(--chrome-light);
+  letter-spacing: 1px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Responsive adjustment */
+@media (max-width: 480px) {
+  .brand h1 { font-size: 17px; }
+  .lens-ring { width: 48px; height: 48px; }
+  .lens { width: 28px; height: 28px; }
+  .control-row {
+    flex-direction: column;
+  }
+}
+
+/* Accessibility Focus States */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+label.btn:focus-within {
+  outline: 3px solid var(--pink) !important;
+  outline-offset: 3px;
+}
+
+/* Pixel Art Icons styling */
+.pixel-icon {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  vertical-align: middle;
+  margin-right: 6px;
+  display: inline-block;
+}
+.btn .pixel-icon {
+  margin-top: -2px;
+}
