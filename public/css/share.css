@@ -1,0 +1,93 @@
+/* Specific layouts for the Polaroid Share Page */
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 16px;
+}
+
+.container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.brand {
+  text-align: center;
+  text-decoration: none;
+}
+
+.brand h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 24px;
+  margin: 0;
+  letter-spacing: 2px;
+  color: var(--paper);
+  text-shadow: 3px 3px 0 var(--pink), 6px 6px 0 var(--ink);
+}
+
+/* Polaroid Card container */
+.polaroid-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--paper);
+  padding: 16px 16px 48px;
+  box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.5);
+  border: 4px solid var(--ink);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.polaroid-photo-frame {
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: #0d0912;
+  border: 3px solid var(--ink);
+  overflow: hidden;
+  position: relative;
+}
+
+#photoCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+}
+
+.polaroid-caption {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--ink);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 26px;
+  line-height: 1.2;
+}
+
+/* Actions overrides */
+.btn.secondary {
+  background: var(--pink);
+}
+
+.loader {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: var(--yellow);
+  text-align: center;
+}
+
+.error-msg {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--pink);
+  text-align: center;
+  line-height: 1.8;
+}

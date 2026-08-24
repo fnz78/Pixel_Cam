@@ -17,7 +17,7 @@
                  img-src 'self' data: blob:; 
                  font-src fonts.gstatic.com fonts.googleapis.com; 
                  style-src 'self' fonts.googleapis.com 'unsafe-inline'; 
-                 script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com">
+                 script-src 'self' https://cdnjs.cloudflare.com">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
 
@@ -274,9 +274,44 @@
       </div>
     </section>
 
-    <!-- Credit Footer -->
-    <footer class="credit">
-      Double-click card to restore settings preset | Hover to reveal action tools
+    <!-- Retro Footer -->
+    <footer class="pixel-footer pixel-corners no-print">
+      <div class="footer-rainbow"></div>
+      <div class="footer-content">
+        <div class="footer-section brand-section">
+          <div class="footer-logo">
+            <span class="dot ready"></span>
+            <span class="logo-text">PIXELCAM</span>
+          </div>
+          <p class="footer-desc">Retro Bead & Dot Art Polaroid Maker. Crafting digital pixel photography and physical patterns.</p>
+          <div class="footer-copyright">&copy; 2026 PIXELCAM. All rights and dots reserved.</div>
+        </div>
+        
+        <div class="footer-section links-section">
+          <h4>CAPABILITIES</h4>
+          <ul>
+            <li><a href="#" onclick="return false;">Retro Dither Matrices</a></li>
+            <li><a href="#" onclick="return false;">Bead Pattern Generator</a></li>
+            <li><a href="#" onclick="return false;">Vector SVG Export</a></li>
+            <li><a href="#" onclick="return false;">Local-First Processing</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section security-section">
+          <h4>SECURITY &amp; PRIVACY</h4>
+          <p>Images are processed locally. Shared polaroids are encrypted using <span class="highlight">AES-256-GCM</span> (authenticated encryption) before storage. Keys are never retained on our servers.</p>
+        </div>
+      </div>
+      
+      <div class="footer-status-bar">
+        <div class="status-item"><span class="status-label">STATUS:</span> <span class="status-val success">ONLINE</span></div>
+        <div class="status-item"><span class="status-label">ENCRYPTION:</span> <span class="status-val success">ACTIVE</span></div>
+        <div class="status-item"><span class="status-label">PRIVACY:</span> <span class="status-val success">SECURED</span></div>
+      </div>
+      
+      <div class="footer-quick-tips">
+        Double-click card to restore settings preset | Hover to reveal action tools
+      </div>
     </footer>
   </div>
 

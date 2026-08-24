@@ -5,8 +5,8 @@ import crypto from 'crypto';
 import { encrypt, decrypt } from './encryption.js';
 
 const router = express.Router();
-let DB_PATH = process.env.PERSISTENT_DIR 
-  ? path.join(process.env.PERSISTENT_DIR, 'db.json') 
+let DB_PATH = process.env.PERSISTENT_DIR
+  ? path.join(process.env.PERSISTENT_DIR, 'db.json')
   : path.resolve('server/db.json');
 
 // Ensure db.json file database structure exists
@@ -24,7 +24,7 @@ const initDb = () => {
       fs.mkdirSync(localDir, { recursive: true });
     }
   }
-  
+
   if (!fs.existsSync(DB_PATH)) {
     fs.writeFileSync(DB_PATH, JSON.stringify({ shares: {} }, null, 2));
   }
@@ -53,9 +53,20 @@ const writeDb = (db) => {
 // API Endpoint to securely share a polaroid card (At-rest AES-256-GCM encryption)
 router.post('/share', (req, res) => {
   const { imageDataUrl, caption } = req.body;
-  
-  if (!imageDataUrl) {
-    return res.status(400).json({ error: 'Image data is required' });
+
+  if (!imageDataUrl || typeof imageDataUrl !== 'string') {
+    return res.status(400).json({ error: 'Image data is required and must be a string' });
+  }
+
+  // Validate imageDataUrl format (must be a valid PNG/JPEG/WEBP base64 data URL)
+  const dataUrlRegex = /^data:image\/(png|jpeg|jpg|webp);base64,([A-Za-z0-9+/=]+)$/;
+  if (!dataUrlRegex.test(imageDataUrl)) {
+    return res.status(400).json({ error: 'Invalid image data url format' });
+  }
+
+  // Validate optional caption (max length 50)
+  if (caption !== undefined && (typeof caption !== 'string' || caption.length > 50)) {
+    return res.status(400).json({ error: 'Caption must be a string and not exceed 50 characters' });
   }
 
   try {
@@ -68,11 +79,15 @@ router.post('/share', (req, res) => {
     // 2. Encrypt
     const encryptedData = encrypt(payload);
 
-    // 3. Generate secure random share ID
+    // 3. Generate secure random share ID (16 hex chars)
     const shareId = crypto.randomBytes(8).toString('hex');
 
     // 4. Save hex ciphertext metadata to database
     const db = readDb();
+    if (!db.shares) {
+      db.shares = {};
+    }
+
     db.shares[shareId] = {
       ciphertext: encryptedData.ciphertext,
       iv: encryptedData.iv,
@@ -91,12 +106,20 @@ router.post('/share', (req, res) => {
 // API Endpoint to retrieve and decrypt a shared polaroid
 router.get('/share/:id', (req, res) => {
   const shareId = req.params.id;
-  const db = readDb();
-  const share = db.shares[shareId];
 
-  if (!share) {
+  // Validate share ID format (16 hex chars)
+  if (!/^[a-f0-9]{16}$/.test(shareId)) {
     return res.status(404).json({ error: 'Shared Polaroid not found' });
   }
+
+  const db = readDb();
+
+  // Guard against prototype pollution and check if the share exists
+  if (!db.shares || !Object.prototype.hasOwnProperty.call(db.shares, shareId)) {
+    return res.status(404).json({ error: 'Shared Polaroid not found' });
+  }
+
+  const share = db.shares[shareId];
 
   try {
     // Decrypt the payload
