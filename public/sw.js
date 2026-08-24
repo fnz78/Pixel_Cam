@@ -1,14 +1,16 @@
-const CACHE_NAME = 'pixelcam-cache-v2';
+const CACHE_NAME = 'pixelcam-cache-v3';
 const ASSETS = [
   './index.html',
   './share.html',
   './css/style.css',
+  './css/share.css',
   './js/app.js',
   './js/camera.js',
   './js/palettes.js',
   './js/renderer.js',
   './js/state.js',
   './js/ui.js',
+  './js/share.js',
   './js/render-worker.js',
   './manifest.json',
   'https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap',
