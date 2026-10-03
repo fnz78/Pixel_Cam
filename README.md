@@ -73,15 +73,6 @@ npm run dev
 ```
 Open **http://localhost:8000** in your browser.
 
-### Security Configurations (Environment Variables)
-
-Create a `.env` file in the root directory to set your custom production encryption key:
-```env
-PORT=8000
-ENCRYPTION_KEY=your_super_secret_production_key_32_chars_or_more
-```
-*If `ENCRYPTION_KEY` is not provided, the server will fall back to a default key for local development (not recommended for production).*
-
 ---
 
 ## Deploying to Production (Render / Heroku)
