@@ -10,7 +10,8 @@ Convert your photos into retro dot-art and bead-art Polaroid-style images. This 
 pixelcam/
   ├── public/                # Frontend static assets
   │   ├── css/
-  │   │   └── style.css      # Core styles & mobile media queries
+  │   │   ├── style.css      # Core styles & mobile media queries
+  │   │   └── share.css      # Share page layout styles
   │   ├── js/
   │   │   ├── app.js         # Entrypoint & service worker registration
   │   │   ├── state.js       # App state management
@@ -18,6 +19,7 @@ pixelcam/
   │   │   ├── camera.js      # Webcam getUserMedia streaming
   │   │   ├── palettes.js    # Perler/Hama color lookup & CIE76 deltaE math
   │   │   ├── renderer.js    # 2D canvas drawing logic
+  │   │   ├── share.js       # Decrypted card display & download logic
   │   │   └── render-worker.js # Multi-threaded Web Worker rendering
   │   ├── index.html         # Main camera console layout
   │   ├── share.html         # Landing page for decrypted shared cards
@@ -27,6 +29,9 @@ pixelcam/
   │   ├── routes.js          # API routing (share and retrieval endpoints)
   │   ├── encryption.js      # AES-256-GCM cryptography utility
   │   └── db.json            # Flat file database (ignored by git)
+  ├── tests/                 # Automated unit test suite (Node test runner)
+  │   ├── encryption.test.js # AES-256-GCM encryption tests
+  │   └── routes.test.js     # API endpoints integration tests
   ├── package.json           # Node scripts and dependencies
   ├── .gitignore             # Git ignore file
   └── README.md              # Setup and deployment documentation
